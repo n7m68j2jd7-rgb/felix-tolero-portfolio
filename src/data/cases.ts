@@ -27,7 +27,7 @@ export const cases: CaseStudy[] = [
     client: "B3connect",
     role: "Podcast & Shorts Editor",
     year: "2026",
-    summary: "Seven full episodes and 89 Shorts for a parenting and youth-sports podcast.",
+    summary: "Seven full episodes and 70 podcast Shorts for a parenting and youth-sports show.",
     services: ["Episode edit", "Shorts", "Thumbnails", "Publishing"],
     channel: { name: "@B3connect", url: "https://www.youtube.com/@B3connect" },
     episodes: b3Episodes,

@@ -3,6 +3,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { categories, projects, type Category, type Project } from "@/data/felix";
+
+/* Web & UI has its own section (WebDesign.tsx), so it is left out here. */
+const workCategories = categories.filter((c) => c !== "Web & UI");
+const workProjects = projects.filter((p) => p.category !== "Web & UI");
+const isGallery = (p: Project) => p.layout === "thumbs" || p.category === "Social" || p.category === "Decks";
 import { Lightbox } from "@/components/Lightbox";
 
 type Filter = "All" | Category;
@@ -44,13 +49,29 @@ function useAutoCycle(count: number, offset: number, active: boolean) {
     return { index, prev };
 }
 
-function CardMeta({ project, note }: { project: Project; note?: string }) {
+/* Project name shown only on hover, over the image – nothing printed below the work. */
+function HoverLabel({ title, sub }: { title: string; sub?: string }) {
     return (
-        <span className="fx-card__meta">
-            <span className="fx-card__title">{project.title}</span>
-            <span className="fx-card__sub">
+        <span className="fx-hover" aria-hidden="true">
+            <span className="fx-hover__title">{title}</span>
+            {sub && <span className="fx-hover__sub">{sub}</span>}
+        </span>
+    );
+}
+
+/* Header above each project to separate them. */
+function ProjectHeader({ project }: { project: Project }) {
+    const unit = project.category === "Decks" ? "slides" : project.layout === "reels" ? "reels" : "pieces";
+    return (
+        <span className="fx-phead">
+            <span className="fx-phead__title">{project.title}</span>
+            <span className="fx-phead__sub">
                 {project.client} · {project.year}
-                {note && <span className="fx-card__note"> · {note}</span>}
+                {!project.page && (
+                    <span className="fx-phead__count">
+                        {project.items.length} {unit}
+                    </span>
+                )}
             </span>
         </span>
     );
@@ -65,6 +86,7 @@ function WorkCard({ project, order, onOpen }: { project: Project; order: number;
     const className = `fx-card${project.wide ? " is-wide" : ""}`;
     const body = (
         <>
+            <ProjectHeader project={project} />
             <span className="fx-card__media" style={{ aspectRatio: project.ratio }}>
                 {previews.map((item, i) => (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -85,7 +107,6 @@ function WorkCard({ project, order, onOpen }: { project: Project; order: number;
                     <i className="icon icon-arrow-right-top" />
                 </span>
             </span>
-            <CardMeta project={project} />
         </>
     );
 
@@ -109,28 +130,30 @@ function WorkCard({ project, order, onOpen }: { project: Project; order: number;
     );
 }
 
-/* Thumbnails: every graphic visible as a plain image; click to view full size. */
-function ThumbGrid({ project, onOpen }: { project: Project; onOpen: (i: number) => void }) {
+/* Gallery: every graphic visible as a plain image; click to view full size. */
+function GalleryGrid({ project, onOpen }: { project: Project; onOpen: (i: number) => void }) {
+    const isThumbs = project.layout === "thumbs";
+    const isDeck = project.category === "Decks";
     return (
-        <div className="fx-card is-wide fx-links">
+        <div className={`fx-card is-wide fx-links fx-gallery${isDeck ? " is-deck" : ""}`}>
+            <ProjectHeader project={project} />
             <div className="fx-links__grid">
                 {project.items.map((item, i) => (
                     <button
                         key={item.src}
                         type="button"
-                        className={`fx-links__item fx-thumb${i === 0 ? " is-lead" : ""}`}
+                        className={`fx-links__item fx-thumb${isThumbs && i === 0 ? " is-lead" : ""}`}
                         onClick={() => onOpen(i)}
                         aria-label={`View ${item.cap} full size`}
                     >
-                        <span className="fx-card__media" style={{ aspectRatio: "16 / 9" }}>
+                        <span className="fx-card__media" style={{ aspectRatio: project.ratio }}>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={item.src} alt={item.cap} className="is-on" loading={i < 3 ? "eager" : "lazy"} />
+                            <HoverLabel title={isDeck ? project.title : item.cap} sub={project.client} />
                         </span>
-                        <span className="fx-links__cap">{item.cap}</span>
                     </button>
                 ))}
             </div>
-            <CardMeta project={project} />
         </div>
     );
 }
@@ -150,6 +173,7 @@ function ReelsRow({ project, onOpen }: { project: Project; onOpen: (i: number) =
 
     return (
         <div ref={ref} className="fx-card is-wide fx-reels">
+            <ProjectHeader project={project} />
             <div className="fx-reels__row">
                 {project.items.map((item, i) => (
                     <button
@@ -179,7 +203,6 @@ function ReelsRow({ project, onOpen }: { project: Project; onOpen: (i: number) =
                     </button>
                 ))}
             </div>
-            <CardMeta project={project} note="Tap to play with sound" />
         </div>
     );
 }
@@ -189,7 +212,7 @@ export function Work() {
     const [open, setOpen] = useState<Open>(null);
 
     const shown = useMemo(
-        () => (filter === "All" ? projects : projects.filter((p) => p.category === filter)),
+        () => (filter === "All" ? workProjects : workProjects.filter((p) => p.category === filter)),
         [filter],
     );
 
@@ -201,7 +224,7 @@ export function Work() {
                     Selected Work
                 </div>
                 <div className="fx-filters" role="tablist" aria-label="Filter work">
-                    {(["All", ...categories] as Filter[]).map((f) => (
+                    {(["All", ...workCategories] as Filter[]).map((f) => (
                         <button
                             key={f}
                             type="button"
@@ -218,8 +241,8 @@ export function Work() {
 
             <div className="fx-grid">
                 {shown.map((p, i) =>
-                    p.layout === "thumbs" ? (
-                        <ThumbGrid key={p.id} project={p} onOpen={(start) => setOpen({ project: p, start })} />
+                    isGallery(p) ? (
+                        <GalleryGrid key={p.id} project={p} onOpen={(start) => setOpen({ project: p, start })} />
                     ) : p.layout === "reels" ? (
                         <ReelsRow key={p.id} project={p} onOpen={(start) => setOpen({ project: p, start })} />
                     ) : (

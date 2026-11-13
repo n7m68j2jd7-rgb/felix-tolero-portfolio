@@ -13,6 +13,8 @@ export function Lightbox({ project, start = 0, onClose }: { project: Project; st
     const closeRef = useRef<HTMLButtonElement>(null);
     const thumbsRef = useRef<HTMLDivElement>(null);
     const touchX = useRef<number | null>(null);
+    /* images much taller than wide (full-page website captures) get a scrollable view */
+    const [tall, setTall] = useState<Record<string, boolean>>({});
 
     const go = useCallback((d: number) => setI((n) => (n + d + total) % total), [total]);
 
@@ -95,9 +97,24 @@ export function Lightbox({ project, start = 0, onClose }: { project: Project; st
                         autoPlay
                         playsInline
                     />
+                ) : project.category === "Web & UI" || tall[item.src] ? (
+                    /* full-page website screenshots: show at readable width and scroll inside */
+                    <div key={item.src} className="fx-lb__scroll" data-lenis-prevent tabIndex={0} aria-label={`${item.cap} – scroll to view the full page`}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={item.src} alt={item.cap} className="fx-lb__page" />
+                    </div>
                 ) : (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img key={item.src} src={item.src} alt={item.cap} className="fx-lb__img" />
+                    <img
+                        key={item.src}
+                        src={item.src}
+                        alt={item.cap}
+                        className="fx-lb__img"
+                        onLoad={(e) => {
+                            const im = e.currentTarget;
+                            if (im.naturalHeight > im.naturalWidth * 1.6) setTall((t) => ({ ...t, [item.src]: true }));
+                        }}
+                    />
                 )}
                 {total > 1 && (
                     <button type="button" className="fx-lb__btn fx-lb__nav is-next" onClick={() => go(1)} aria-label="Next">

@@ -10,6 +10,7 @@ import { Preloader } from "./Preloader";
 import { Intro } from "./sections/Intro";
 import { Education } from "./sections/Education";
 import { Work } from "./sections/Work";
+import { WebDesign } from "./sections/WebDesign";
 import { Services } from "./sections/Services";
 import { Tech } from "./sections/Tech";
 import { Contact } from "./sections/Contact";
@@ -52,6 +53,7 @@ export function HomeShell() {
                                 <div className="wrap-container">
                                     <Intro />
                                     <Work />
+                                    <WebDesign />
                                     <Services />
                                     <Education />
                                     <Tech />

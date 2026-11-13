@@ -191,23 +191,46 @@ const allProjects: Project[] = [
     ],
   },
   {
-    id: "ucredesign",
-    title: "University Website",
-    client: "University of Cebu",
+    id: "slamdunkhoops",
+    title: "Website Redesign",
+    client: "Slam Dunk Hoops",
     category: "Web & UI",
-    year: "2025",
+    year: "2026",
     ratio: "1 / 1",
     items: [
-      { src: w("ucredesign", "01-homepage"), cap: "Homepage" },
-      { src: w("ucredesign", "02-homepage-news-events"), cap: "News & Events" },
-      { src: w("ucredesign", "03-campuses"), cap: "Campuses" },
-      { src: w("ucredesign", "04-basic-education"), cap: "Basic Education" },
+      { src: w("slamdunkhoops", "01-home"), cap: "Home" },
+      { src: w("slamdunkhoops", "02-about-us"), cap: "About Us" },
+      { src: w("slamdunkhoops", "03-residential"), cap: "Residential Solutions" },
+      { src: w("slamdunkhoops", "04-commercial"), cap: "Commercial Solutions" },
+      { src: w("slamdunkhoops", "05-our-work"), cap: "Our Work" },
+      { src: w("slamdunkhoops", "06-contact"), cap: "Contact Us" },
+    ],
+  },
+  {
+    id: "felderhomes",
+    title: "Website Redesign",
+    client: "Felder Homes",
+    category: "Web & UI",
+    year: "2026",
+    ratio: "1 / 1",
+    items: [
+      { src: w("felderhomes", "01-home"), cap: "Home" },
+      { src: w("felderhomes", "02-about"), cap: "About" },
+      { src: w("felderhomes", "03-gallery"), cap: "Gallery" },
+      { src: w("felderhomes", "04-services"), cap: "Services" },
+      { src: w("felderhomes", "05-custom-homes"), cap: "Service · Custom Homes" },
+      { src: w("felderhomes", "06-roofing"), cap: "Service · Roofing" },
+      { src: w("felderhomes", "07-remodeling"), cap: "Service · Remodeling" },
+      { src: w("felderhomes", "08-fencing"), cap: "Service · Fencing" },
+      { src: w("felderhomes", "09-real-estate-consultation"), cap: "Service · Real Estate Consultation" },
+      { src: w("felderhomes", "10-projects-for-sale"), cap: "Projects For Sale" },
+      { src: w("felderhomes", "11-contact"), cap: "Contact" },
     ],
   },
 ];
 
 /* Display order under "All": podcast work first, then thumbnails, then the rest. */
-const ORDER = ["b3-podcast", "impact-society", "reels", "podcast", "deck", "rodwarner", "impact", "sisters", "arctowers", "jjtammy", "ucredesign"];
+const ORDER = ["b3-podcast", "impact-society", "reels", "podcast", "deck", "rodwarner", "impact", "sisters", "arctowers", "jjtammy", "slamdunkhoops", "felderhomes"];
 export const projects: Project[] = [...allProjects].sort(
   (a, b) => (ORDER.indexOf(a.id) + 1 || 99) - (ORDER.indexOf(b.id) + 1 || 99),
 );
@@ -257,6 +280,7 @@ export const clients = [
 export const navItems = [
   { href: "#home", label: "Home", icon: "icon-home" },
   { href: "#work", label: "Work", icon: "icon-high-light" },
+  { href: "#web", label: "Web Design", icon: "icon-global-elip" },
   { href: "#service", label: "Services", icon: "icon-service" },
   { href: "#experience", label: "Experience", icon: "icon-edu" },
   { href: "#tools", label: "Tools", icon: "icon-tech-stack" },

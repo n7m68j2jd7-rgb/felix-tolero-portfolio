@@ -1,5 +1,4 @@
-import { clients, profile } from "@/data/felix";
-import AutoRepeatMarquee from "@/components/AutoRepeatMarquee";
+import { profile } from "@/data/felix";
 
 export function Intro() {
     return (
@@ -22,17 +21,6 @@ export function Intro() {
                 </a>
             </div>
 
-            <p className="intro-client letter-space--05 text-body-3">
-                <i className="icon icon-global-elip" />
-                Trusted by
-            </p>
-            <AutoRepeatMarquee direction="left" className="infiniteSlide-brand" pauseOnHover speed={30} repeat={4}>
-                {clients.map((c) => (
-                    <span className="fx-client" key={c}>
-                        {c}
-                    </span>
-                ))}
-            </AutoRepeatMarquee>
         </div>
     );
 }
